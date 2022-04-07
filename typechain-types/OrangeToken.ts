@@ -89,14 +89,10 @@ export interface OrangeTokenInterface extends utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "Burn(address,uint256,uint256,address)": EventFragment;
-    "Mint(address,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Burn"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Mint"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -106,25 +102,6 @@ export type ApprovalEvent = TypedEvent<
 >;
 
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
-
-export type BurnEvent = TypedEvent<
-  [string, BigNumber, BigNumber, string],
-  {
-    sender: string;
-    amountBefore: BigNumber;
-    amountAfter: BigNumber;
-    to: string;
-  }
->;
-
-export type BurnEventFilter = TypedEventFilter<BurnEvent>;
-
-export type MintEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { sender: string; amountBefore: BigNumber; amountAfter: BigNumber }
->;
-
-export type MintEventFilter = TypedEventFilter<MintEvent>;
 
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber],
@@ -322,30 +299,6 @@ export interface OrangeToken extends BaseContract {
       spender?: string | null,
       value?: null
     ): ApprovalEventFilter;
-
-    "Burn(address,uint256,uint256,address)"(
-      sender?: string | null,
-      amountBefore?: null,
-      amountAfter?: null,
-      to?: string | null
-    ): BurnEventFilter;
-    Burn(
-      sender?: string | null,
-      amountBefore?: null,
-      amountAfter?: null,
-      to?: string | null
-    ): BurnEventFilter;
-
-    "Mint(address,uint256,uint256)"(
-      sender?: string | null,
-      amountBefore?: null,
-      amountAfter?: null
-    ): MintEventFilter;
-    Mint(
-      sender?: string | null,
-      amountBefore?: null,
-      amountAfter?: null
-    ): MintEventFilter;
 
     "Transfer(address,address,uint256)"(
       from?: string | null,

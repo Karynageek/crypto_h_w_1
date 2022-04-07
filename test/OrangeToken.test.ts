@@ -20,7 +20,7 @@ describe('Orange Token contract', () => {
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
     const OrangeToken = (await ethers.getContractFactory('OrangeToken')) as OrangeToken__factory;
-    token = await OrangeToken.deploy();
+    token = await OrangeToken.deploy(name, symbol, decimals, 1000000000);
 
     await token.deployed();
   });
@@ -48,9 +48,9 @@ describe('Orange Token contract', () => {
   });
 
   describe('transfers tokens', () => {
-    it('transfers successfully', async () => {
-      const amount = parseEther('100');
+    const amount = parseEther('100');
 
+    it('transfers successfully', async () => {
       const addr1BalanceBefore = await token.balanceOf(owner.address);
 
       const result = await token.transfer(addr1.address, amount);
@@ -61,6 +61,10 @@ describe('Orange Token contract', () => {
 
       await expect(result).to.emit(token, "Transfer")
         .withArgs(owner.address, addr1.address, amount);
+    })
+
+    it('rejects mint by zero address', async () => {
+      await expect(token.transfer(zeroAddress, amount)).to.be.revertedWith('Transfer to the zero address');
     })
 
     it('rejects insufficient balances', async () => {
@@ -97,6 +101,10 @@ describe('Orange Token contract', () => {
 
       await expect(result).to.emit(token, "Transfer")
         .withArgs(owner.address, addr1.address, amount);
+    })
+
+    it('rejects mint by zero address', async () => {
+      await expect(token.transferFrom(owner.address, zeroAddress, amount)).to.be.revertedWith('Transfer to the zero address');
     })
 
     it('rejects insufficient balances', async () => {
