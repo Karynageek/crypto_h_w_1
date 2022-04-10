@@ -1,29 +1,21 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
+import { parseEther } from "ethers/lib/utils";
 import { ethers } from "hardhat";
+import { OrangeToken__factory } from "../typechain-types/factories/OrangeToken__factory";
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+  const name = 'Orange Token';
+  const symbol = 'ORT';
+  const decimals = 18;
+  const totalSupply = '1000000000'
 
-  // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const OrangeToken = await ethers.getContractFactory("OrangeToken") as OrangeToken__factory;
+  const orangeToken = await OrangeToken.deploy(name, symbol, decimals, totalSupply);
 
-  await greeter.deployed();
+  await orangeToken.deployed();
 
-  console.log("Greeter deployed to:", greeter.address);
+  console.log("OrangeToken deployed to:", orangeToken.address);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
