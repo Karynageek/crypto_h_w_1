@@ -3,13 +3,14 @@ import { ethers } from "hardhat";
 import { parseEther } from "@ethersproject/units";
 import { OrangeToken__factory } from "../typechain-types/factories/OrangeToken__factory";
 import { OrangeToken } from "../typechain-types/OrangeToken";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 describe('Orange Token contract', () => {
   let token: OrangeToken;
-  let owner: any;
-  let addr1: any;
-  let addr2: any;
-  let addrs: any;
+  let owner: SignerWithAddress;
+  let addr1: SignerWithAddress;
+  let addr2: SignerWithAddress;
+  let addrs: SignerWithAddress[];
   const name = 'Orange Token';
   const symbol = 'ORT';
   const decimals = 18;
@@ -138,6 +139,10 @@ describe('Orange Token contract', () => {
     it('rejects mint by zero address', async () => {
       await expect(token.mint(zeroAddress, amount)).to.be.revertedWith('Mint to the zero address');
     })
+
+    it('rejects mint by not owner', async () => {
+      await expect(token.connect(addr1).mint(addr1.address, amount)).to.be.revertedWith('OrangeToken: !owner');
+    })
   })
 
   describe('burn', () => {
@@ -165,6 +170,10 @@ describe('Orange Token contract', () => {
 
     it('rejects burn when amount exceeds balance', async () => {
       await expect(token.burn(addr2.address, amount)).to.be.revertedWith('Amount exceeds balance');
+    })
+
+    it('rejects burn by not owner', async () => {
+      await expect(token.connect(addr1).mint(owner.address, amount)).to.be.revertedWith('OrangeToken: !owner');
     })
   })
 });
