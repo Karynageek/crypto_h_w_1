@@ -1,8 +1,6 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
-
 contract OrangeToken {
     address public owner;
     string private _name;
@@ -29,35 +27,38 @@ contract OrangeToken {
         _name = nameToken;
         _symbol = symbolToken;
         _decimals = decimalsToken;
-        _totalSupply = totalSupplyToken * 10**_decimals;
-        _balances[msg.sender] = _totalSupply;
         owner = msg.sender;
 
-        emit Transfer(address(0), msg.sender, _totalSupply);
+        _mint(msg.sender, totalSupplyToken * (10**decimalsToken));
     }
 
-    function name() public view returns (string memory) {
+    modifier onlyOwner() {
+        require(msg.sender == owner, "OrangeToken: !owner");
+        _;
+    }
+
+    function name() external view returns (string memory) {
         return _name;
     }
 
-    function symbol() public view returns (string memory) {
+    function symbol() external view returns (string memory) {
         return _symbol;
     }
 
-    function decimals() public view returns (uint8) {
+    function decimals() external view returns (uint8) {
         return _decimals;
     }
 
-    function totalSupply() public view returns (uint256) {
+    function totalSupply() external view returns (uint256) {
         return _totalSupply;
     }
 
-    function balanceOf(address _owner) public view returns (uint256) {
+    function balanceOf(address _owner) external view returns (uint256) {
         return _balances[_owner];
     }
 
     function allowance(address _owner, address _spender)
-        public
+        external
         view
         returns (uint256)
     {
@@ -65,7 +66,7 @@ contract OrangeToken {
     }
 
     function transfer(address _to, uint256 _value)
-        public
+        external
         returns (bool success)
     {
         require(_to != address(0), "Transfer to the zero address");
@@ -98,7 +99,7 @@ contract OrangeToken {
     }
 
     function approve(address _spender, uint256 _value)
-        public
+        external
         returns (bool success)
     {
         _allowances[msg.sender][_spender] = _value;
@@ -106,18 +107,22 @@ contract OrangeToken {
         return true;
     }
 
-    function mint(address _account, uint256 _amount) public {
-        require(_account != address(0), "Mint to the zero address");
-        _totalSupply += _amount;
-        _balances[_account] += _amount;
-        emit Transfer(address(0), _account, _amount);
+    function mint(address _account, uint256 _amount) external onlyOwner {
+        _mint(_account, _amount);
     }
 
-    function burn(address _account, uint256 _amount) public {
+    function burn(address _account, uint256 _amount) external onlyOwner {
         require(_account != address(0), "Burn to the zero address");
         require(_balances[_account] >= _amount, "Amount exceeds balance");
         _balances[_account] -= _amount;
         _totalSupply -= _amount;
         emit Transfer(_account, address(0), _amount);
+    }
+
+    function _mint(address _account, uint256 _amount) internal {
+        require(_account != address(0), "Mint to the zero address");
+        _totalSupply += _amount;
+        _balances[_account] += _amount;
+        emit Transfer(address(0), _account, _amount);
     }
 }

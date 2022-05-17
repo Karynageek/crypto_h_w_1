@@ -7,7 +7,7 @@ async function main() {
   const decimals = 18;
   const totalSupply = 1000000000;
 
-  //const delay = (ms: any) => new Promise((res) => setTimeout(res, ms));
+  const delay = (ms: any) => new Promise((res) => setTimeout(res, ms));
 
   const OrangeToken = await ethers.getContractFactory("OrangeToken") as OrangeToken__factory;
   const orangeToken = await OrangeToken.deploy(name, symbol, decimals, totalSupply);
@@ -16,12 +16,12 @@ async function main() {
 
   console.log("OrangeToken deployed to:", orangeToken.address);
 
-  //await delay(35000);
+  await delay(35000);
 
-  // await hre.run("verify:verify", {
-  //   address: orangeToken.address,
-  //   constructorArguments: [name, symbol, decimals, totalSupply],
-  // });
+  await hre.run("verify:verify", {
+    address: orangeToken.address,
+    constructorArguments: [name, symbol, decimals, totalSupply],
+  });
 }
 
 main().catch((error) => {
